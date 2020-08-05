@@ -1,0 +1,26 @@
+version: '3'
+services:
+  db:
+    image: postgres:11.4-alpine
+    container_name: postgres-test
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: shop_db
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ./pg-data:/var/lib/postgresql/data
+      - ./data/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ./data/data.sql:/docker-entrypoint-initdb.d/2-init.sql
+    restart: always
+  itemService:
+    image: vladsmirn289/item_service_rest
+    container_name: itemService
+    ports:
+      - 8083:8083
+    environment:
+      POSTGRES_HOST: db
+    restart: always
+    links:
+      - db
