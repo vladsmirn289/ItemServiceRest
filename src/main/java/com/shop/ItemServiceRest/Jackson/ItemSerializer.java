@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.shop.ItemServiceRest.Model.Item;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class ItemSerializer extends StdSerializer<Item> {
@@ -38,7 +39,12 @@ public class ItemSerializer extends StdSerializer<Item> {
         jsonGenerator.writeStringField("image", item.getImage());
         jsonGenerator.writeStringField("code", item.getCode());
         jsonGenerator.writeObjectField("category", item.getCategory());
-        jsonGenerator.writeStringField("createdOn", item.getCreatedOn().format(formatter));
+
+        if (item.getCreatedOn() == null) {
+            jsonGenerator.writeStringField("createdOn", LocalDateTime.now().format(formatter));
+        } else {
+            jsonGenerator.writeStringField("createdOn", item.getCreatedOn().format(formatter));
+        }
 
         jsonGenerator.writeEndObject();
     }

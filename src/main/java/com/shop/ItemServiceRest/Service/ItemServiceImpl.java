@@ -1,6 +1,5 @@
 package com.shop.ItemServiceRest.Service;
 
-import com.shop.ItemServiceRest.Model.Category;
 import com.shop.ItemServiceRest.Model.Item;
 import com.shop.ItemServiceRest.Repository.ItemRepo;
 import org.slf4j.Logger;
@@ -44,14 +43,6 @@ public class ItemServiceImpl implements ItemService {
     public List<Item> findByPrice(Double price) {
         logger.info("findByPrice method called for item price = " + price);
         return itemRepo.findByPrice(price);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    @Cacheable(value = "pagination", key = "#pageable")
-    public Page<Item> findByCategory(Category category, Pageable pageable) {
-        logger.info("findByCategory method called");
-        return itemRepo.findByCategory(category, pageable);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.shop.ItemServiceRest.Controller;
 
-import com.shop.ItemServiceRest.Model.Category;
 import com.shop.ItemServiceRest.Model.Item;
 import com.shop.ItemServiceRest.Service.ItemService;
 import org.slf4j.Logger;
@@ -44,24 +43,6 @@ public class ItemController {
     public ResponseEntity<List<Item>> showItemsByPrice(@RequestParam("price") Double price) {
         logger.info("Called showItemsByPrice method");
         List<Item> items = itemService.findByPrice(price);
-
-        return new ResponseEntity<>(items, HttpStatus.OK);
-    }
-
-    @GetMapping(params = {"page", "size"})
-    public ResponseEntity<List<Item>> showItemsByCategory(@RequestBody @Valid Category category,
-                                                          @RequestParam("page") int page,
-                                                          @RequestParam("size") int size,
-                                                          BindingResult bindingResult) {
-        logger.info("Called showItemsByCategory method");
-
-        if (bindingResult.hasErrors()) {
-            logger.info("Category is not valid");
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
-
-        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
-        List<Item> items = itemService.findByCategory(category, pageable).getContent();
 
         return new ResponseEntity<>(items, HttpStatus.OK);
     }

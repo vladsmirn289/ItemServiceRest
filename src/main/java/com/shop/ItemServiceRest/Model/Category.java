@@ -1,7 +1,7 @@
 package com.shop.ItemServiceRest.Model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
@@ -27,7 +27,7 @@ public class Category {
     @OneToMany(fetch = FetchType.LAZY,
                cascade = { CascadeType.PERSIST, CascadeType.REMOVE },
                mappedBy = "category")
-    @JsonBackReference
+    @JsonIgnore
     private Set<Item> items = new HashSet<>();
 
 

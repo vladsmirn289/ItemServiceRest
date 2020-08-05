@@ -1,9 +1,10 @@
 package com.shop.ItemServiceRest.Model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.shop.ItemServiceRest.Jackson.ItemDeserializer;
+import com.shop.ItemServiceRest.Jackson.ItemSerializer;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -14,6 +15,8 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
+@JsonSerialize(using = ItemSerializer.class)
+@JsonDeserialize(using = ItemDeserializer.class)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Item {
     @Id
@@ -52,7 +55,6 @@ public class Item {
     @NotNull(message = "Категория должна существовать")
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
-    @JsonManagedReference
     private Category category;
 
     @Column(updatable = false)
