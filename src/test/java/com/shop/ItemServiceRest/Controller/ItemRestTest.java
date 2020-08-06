@@ -52,7 +52,7 @@ public class ItemRestTest {
     public void shouldShowItemsByName() {
         ResponseEntity<List<Item>> responseItems =
                 restTemplate.exchange(
-                        "http://localhost:9003/api/items?name=Spring+5+для+профессионалов",
+                        "http://localhost:9003/items-rest-swagger/api/items/byName/Spring 5 для профессионалов",
                         HttpMethod.GET,
                         null,
                         new ParameterizedTypeReference<List<Item>>(){});
@@ -80,7 +80,7 @@ public class ItemRestTest {
     public void shouldShowItemsByPrice() {
         ResponseEntity<List<Item>> responseItems =
                 restTemplate.exchange(
-                        "http://localhost:9003/api/items?price=4000",
+                        "http://localhost:9003/items-rest-swagger/api/items/byPrice/4000",
                         HttpMethod.GET,
                         null,
                         new ParameterizedTypeReference<List<Item>>(){});
@@ -108,7 +108,7 @@ public class ItemRestTest {
     public void shouldShowItemsByKeyword() {
         ResponseEntity<List<Item>> responseItems =
                 restTemplate.exchange(
-                        "http://localhost:9003/api/items?keyword=для+профессионал&page=0&size=10",
+                        "http://localhost:9003/items-rest-swagger/api/items/byKeyword/для?page=0&size=10",
                         HttpMethod.GET,
                         null,
                         new ParameterizedTypeReference<List<Item>>(){});
@@ -127,10 +127,15 @@ public class ItemRestTest {
     }
 
     @Test
+    @Sql(value = {
+            "classpath:db/PostgreSQL/after-test.sql",
+            "classpath:db/PostgreSQL/category-test.sql",
+            "classpath:db/PostgreSQL/item-test.sql"},
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void shouldShowItemById() {
         ResponseEntity<Item> responseItems =
                 restTemplate.exchange(
-                        "http://localhost:9003/api/items/6",
+                        "http://localhost:9003/items-rest-swagger/api/items/6",
                         HttpMethod.GET,
                         null,
                         Item.class);
@@ -157,7 +162,7 @@ public class ItemRestTest {
     public void shouldNotFoundWhenFindItemByIncorrectId() {
         ResponseEntity<Item> responseItems =
                 restTemplate.exchange(
-                        "http://localhost:9003/api/items/100",
+                        "http://localhost:9003/items-rest-swagger/api/items/100",
                         HttpMethod.GET,
                         null,
                         Item.class);
@@ -170,7 +175,7 @@ public class ItemRestTest {
     public void shouldShowItemByCode() {
         ResponseEntity<Item> responseItems =
                 restTemplate.exchange(
-                        "http://localhost:9003/api/items?code=e43a71c7",
+                        "http://localhost:9003/items-rest-swagger/api/items/byCode/e43a71c7",
                         HttpMethod.GET,
                         null,
                         Item.class);
@@ -197,7 +202,7 @@ public class ItemRestTest {
     public void shouldNotFoundWhenFindItemByIncorrectCode() {
         ResponseEntity<Item> responseItems =
                 restTemplate.exchange(
-                        "http://localhost:9003/api/items?code=1234567890",
+                        "http://localhost:9003/items-rest-swagger/api/items/byCode/1234567890",
                         HttpMethod.GET,
                         null,
                         Item.class);
@@ -215,7 +220,7 @@ public class ItemRestTest {
 
         ResponseEntity<Item> responseItems =
                 restTemplate.exchange(
-                        "http://localhost:9003/api/items/6",
+                        "http://localhost:9003/items-rest-swagger/api/items/6",
                         HttpMethod.PUT,
                         new HttpEntity<>(item),
                         Item.class);
@@ -245,7 +250,7 @@ public class ItemRestTest {
 
         ResponseEntity<Item> responseItems =
                 restTemplate.exchange(
-                        "http://localhost:9003/api/items/6",
+                        "http://localhost:9003/items-rest-swagger/api/items/6",
                         HttpMethod.PUT,
                         new HttpEntity<>(item),
                         Item.class);
@@ -275,7 +280,7 @@ public class ItemRestTest {
 
         ResponseEntity<Item> responseItems =
                 restTemplate.exchange(
-                        "http://localhost:9003/api/items",
+                        "http://localhost:9003/items-rest-swagger/api/items",
                         HttpMethod.POST,
                         new HttpEntity<>(item),
                         Item.class);
@@ -303,7 +308,7 @@ public class ItemRestTest {
 
         ResponseEntity<Item> responseItems =
                 restTemplate.exchange(
-                        "http://localhost:9003/api/items",
+                        "http://localhost:9003/items-rest-swagger/api/items",
                         HttpMethod.POST,
                         new HttpEntity<>(item),
                         Item.class);
@@ -326,7 +331,7 @@ public class ItemRestTest {
     @Test
     public void shouldSuccessfulDeleteItem() {
         restTemplate.exchange(
-                "http://localhost:9003/api/items/6",
+                "http://localhost:9003/items-rest-swagger/api/items/6",
                 HttpMethod.DELETE,
                 null,
                 Object.class);
