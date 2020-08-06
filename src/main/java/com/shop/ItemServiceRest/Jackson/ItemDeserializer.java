@@ -38,15 +38,18 @@ public class ItemDeserializer extends StdDeserializer<Item> {
         String image = node.get("image").asText();
         String code = node.get("code").asText();
         Category category = objectMapper.treeToValue(node.get("category"), Category.class);
-        String createdOnString = node.get("createdOn").asText();
-        LocalDateTime createdOn = LocalDateTime.parse(createdOnString, formatter);
 
         Item item = new Item(name, count, weight, price, code);
         item.setDescription(description);
         item.setCharacteristics(characteristics);
         item.setImage(image);
         item.setCategory(category);
-        item.setCreatedOn(createdOn);
+
+        if (node.hasNonNull("createdOn")) {
+            String createdOnString = node.get("createdOn").asText();
+            LocalDateTime createdOn = LocalDateTime.parse(createdOnString, formatter);
+            item.setCreatedOn(createdOn);
+        }
 
         if (node.hasNonNull("id")) {
             item.setId(node.get("id").asLong());

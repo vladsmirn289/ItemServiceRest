@@ -2,6 +2,9 @@ package com.shop.ItemServiceRest.Controller;
 
 import com.shop.ItemServiceRest.Model.Item;
 import com.shop.ItemServiceRest.Service.ItemService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -31,24 +34,27 @@ public class ItemController {
         this.itemService = itemService;
     }
 
-    @GetMapping(params = {"name"})
-    public ResponseEntity<List<Item>> showItemsByName(@RequestParam("name") String name) {
+    @ApiOperation(value = "Find item by name")
+    @GetMapping("/byName/{name}")
+    public ResponseEntity<List<Item>> showItemsByName(@PathVariable("name") String name) {
         logger.info("Called showItemsByName method");
         List<Item> items = itemService.findByName(name);
 
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
 
-    @GetMapping(params = {"price"})
-    public ResponseEntity<List<Item>> showItemsByPrice(@RequestParam("price") Double price) {
+    @ApiOperation(value = "Find item by price")
+    @GetMapping("/byPrice/{price}")
+    public ResponseEntity<List<Item>> showItemsByPrice(@PathVariable("price") Double price) {
         logger.info("Called showItemsByPrice method");
         List<Item> items = itemService.findByPrice(price);
 
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
 
-    @GetMapping(params = {"keyword", "page", "size"})
-    public ResponseEntity<List<Item>> showItemsByKeyword(@RequestParam("keyword") String keyword,
+    @ApiOperation(value = "Find item by keyword with pagination")
+    @GetMapping(value = "/byKeyword/{keyword}", params = {"page", "size"})
+    public ResponseEntity<List<Item>> showItemsByKeyword(@PathVariable("keyword") String keyword,
                                                          @RequestParam("page") int page,
                                                          @RequestParam("size") int size) {
         logger.info("Called showItemsByKeyword method");
@@ -58,6 +64,7 @@ public class ItemController {
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Find item by id")
     @GetMapping("/{id}")
     public ResponseEntity<Item> showItemById(@PathVariable("id") Long id) {
         logger.info("Called showItemById method");
@@ -72,8 +79,9 @@ public class ItemController {
         }
     }
 
-    @GetMapping(params = {"code"})
-    public ResponseEntity<Item> showItemByCode(@RequestParam("code") String code) {
+    @ApiOperation(value = "Find item by code")
+    @GetMapping("/byCode/{code}")
+    public ResponseEntity<Item> showItemByCode(@PathVariable("code") String code) {
         logger.info("Called showItemById method");
 
         Item item = itemService.findByCode(code);
@@ -85,6 +93,10 @@ public class ItemController {
         return new ResponseEntity<>(item, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Update exists item")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Bad request (invalid item information)")
+    })
     @PutMapping("/{id}")
     public ResponseEntity<Item> updateItem(@PathVariable("id") Long id,
                                            @RequestBody @Valid Item item,
@@ -109,6 +121,10 @@ public class ItemController {
         }
     }
 
+    @ApiOperation(value = "Create new item")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Bad request (invalid item information)")
+    })
     @PostMapping
     public ResponseEntity<Item> createNewItem(@RequestBody @Valid Item item,
                                               BindingResult bindingResult) {
@@ -123,6 +139,10 @@ public class ItemController {
         return new ResponseEntity<>(item, HttpStatus.CREATED);
     }
 
+    @ApiOperation(value = "Delete item", notes = "Don't recommended to use")
+    @ApiResponses(value = {
+            @ApiResponse(code = 500, message = "Conflict (The item can be located in the basket or in the order list of anyone)")
+    })
     @DeleteMapping("/{id}")
     public void deleteItem(@PathVariable("id") Long id) {
         logger.info("Called deleteItem method");
