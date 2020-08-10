@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -54,12 +55,12 @@ public class ItemController {
 
     @ApiOperation(value = "Find item by keyword with pagination")
     @GetMapping(value = "/byKeyword/{keyword}", params = {"page", "size"})
-    public ResponseEntity<List<Item>> showItemsByKeyword(@PathVariable("keyword") String keyword,
+    public ResponseEntity<Page<Item>> showItemsByKeyword(@PathVariable("keyword") String keyword,
                                                          @RequestParam("page") int page,
                                                          @RequestParam("size") int size) {
         logger.info("Called showItemsByKeyword method");
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
-        List<Item> items = itemService.findBySearch(keyword, pageable).getContent();
+        Page<Item> items = itemService.findBySearch(keyword, pageable);
 
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
