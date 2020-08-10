@@ -47,7 +47,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "pagination", key = "#pageable")
     public Page<Item> findBySearch(String keyword, Pageable pageable) {
         logger.info("findBySearch method called");
         return itemRepo.findBySearch(keyword, pageable);

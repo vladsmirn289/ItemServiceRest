@@ -60,27 +60,6 @@ public class CacheTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    public void findBySearchCachingTest() {
-        Pageable pageable1 = PageRequest.of(0, 1);
-        Pageable pageable2 = PageRequest.of(1, 1);
-        itemService.findBySearch("для профессионал", pageable1);
-        itemService.findBySearch("для профессионал", pageable2);
-
-        Cache cache = cacheManager.getCache("pagination");
-        assertThat(cache).isNotNull();
-
-        Page<Item> itemPage1 = cache.get(pageable1, Page.class);
-        Page<Item> itemPage2 = cache.get(pageable2, Page.class);
-        assertThat(itemPage1).isNotNull();
-        assertThat(itemPage2).isNotNull();
-        List<Item> clients1 = itemPage1.getContent();
-        List<Item> clients2 = itemPage2.getContent();
-        assertThat(clients1.get(0).getName()).isEqualTo("Spring 5 для профессионалов");
-        assertThat(clients2.get(0).getName()).isEqualTo("Git для профессионального программиста");
-    }
-
-    @Test
     public void findByIdCachingTest() {
         itemService.findById(6L);
         itemService.findById(7L);
