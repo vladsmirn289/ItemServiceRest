@@ -5,9 +5,6 @@ import com.shop.ItemServiceRest.Repository.ItemRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -31,7 +28,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "items")
     public List<Item> findByName(String name) {
         logger.info("findByName method called");
         return itemRepo.findByName(name);
@@ -39,7 +35,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "items")
     public List<Item> findByPrice(Double price) {
         logger.info("findByPrice method called for item price = " + price);
         return itemRepo.findByPrice(price);
@@ -54,7 +49,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "items")
     public Item findById(Long id) {
         logger.info("findById method called for item id = " + id);
         return itemRepo.findById(id).orElseThrow(NoSuchElementException::new);
@@ -62,7 +56,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "items")
     public Item findByCode(String code) {
         logger.info("findByCode method called for item code = " + code);
         return itemRepo.findByCode(code);
@@ -75,12 +68,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "items", key = "#item.name"),
-            @CacheEvict(value = "items", key = "#item.price"),
-            @CacheEvict(value = "items", key = "#item.id"),
-            @CacheEvict(value = "items", key = "#item.code")
-    })
     public void delete(Item item) {
         logger.info("Deleting item with id = " + item.getId() + " from database");
         itemRepo.delete(item);
