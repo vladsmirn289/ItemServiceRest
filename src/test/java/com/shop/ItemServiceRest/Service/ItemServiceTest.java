@@ -11,7 +11,6 @@ import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -30,9 +29,6 @@ public class ItemServiceTest {
     @Autowired
     private ItemService itemService;
 
-    @Autowired
-    private CacheManager cacheManager;
-
     @MockBean
     private ItemRepo itemRepo;
 
@@ -41,9 +37,6 @@ public class ItemServiceTest {
 
     @BeforeEach
     public void init() {
-        cacheManager.getCache("items").clear();
-        cacheManager.getCache("pagination").clear();
-
         Category books = new Category("Books");
         this.book = new Category("Book", books);
         this.item = new Item("item", 30L, 3D

@@ -1,14 +1,13 @@
 package com.shop.ItemServiceRest.Controller;
 
+import com.shop.ItemServiceRest.DTO.PageResponse;
 import com.shop.ItemServiceRest.Model.Item;
 import com.shop.ItemServiceRest.Repository.CategoryRepo;
 import com.shop.ItemServiceRest.Service.ItemService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -38,15 +37,6 @@ public class ItemRestTest {
 
     @Autowired
     private CategoryRepo categoryRepo;
-
-    @Autowired
-    private CacheManager cacheManager;
-
-    @BeforeEach
-    public void init() {
-        cacheManager.getCache("items").clear();
-        cacheManager.getCache("pagination").clear();
-    }
 
     @Test
     public void shouldShowItemsByName() {
@@ -106,17 +96,17 @@ public class ItemRestTest {
 
     @Test
     public void shouldShowItemsByKeyword() {
-        ResponseEntity<List<Item>> responseItems =
+        ResponseEntity<PageResponse<Item>> responseItems =
                 restTemplate.exchange(
                         "http://localhost:9003/items-rest-swagger/api/items/byKeyword/для?page=0&size=10",
                         HttpMethod.GET,
                         null,
-                        new ParameterizedTypeReference<List<Item>>(){});
+                        new ParameterizedTypeReference<PageResponse<Item>>(){});
 
         assertThat(responseItems.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseItems.getBody()).isNotNull();
 
-        List<Item> items = responseItems.getBody();
+        List<Item> items = responseItems.getBody().toPageImpl().getContent();
         assertThat(items.size()).isEqualTo(2);
 
         Item first = items.get(0);
