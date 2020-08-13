@@ -5,9 +5,6 @@ jdk: oraclejdk8
 services:
   - docker
 
-before_install:
-  - docker pull vladsmirn289/item-service-rest
-
 before_script:
   - docker-compose up -d --file ./src/test/java/com/shop/ItemServiceRest/docker-compose-test.yml
 
