@@ -15,7 +15,7 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
 
 before_script:
-  - docker-compose up -d --build --file ./src/test/java/com/shop/ItemServiceRest/docker-compose-test.yml
+  - docker-compose --file ./src/test/java/com/shop/ItemServiceRest/docker-compose-test.yml up -d
 
 after_script:
   - docker-compose --file ./src/test/java/com/shop/ItemServiceRest/docker-compose-test.yml down
