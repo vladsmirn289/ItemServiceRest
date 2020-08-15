@@ -14,6 +14,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.NoSuchElementException;
 
 @Component
@@ -23,12 +26,21 @@ public class ItemControllerAspect {
 
     @Around(value = "@annotation(NoSuchElementPointcut)")
     public Object afterThrowNoElement(ProceedingJoinPoint joinPoint) throws Throwable {
-        long id = 0L;
-        for (Object arg : joinPoint.getArgs()) {
-            PathVariable ann = arg.getClass().getDeclaredAnnotation(PathVariable.class);
+        Long id = null;
+        MethodSignature methodSignature = (MethodSignature)joinPoint.getSignature();
+        Method method = methodSignature.getMethod();
+        Object[] args = joinPoint.getArgs();
+        Parameter[] params = methodSignature.getMethod().getParameters();
 
-            if (ann != null && ann.value().equals("id")) {
-                id = (Long)arg;
+        for (int i = 0; i < method.getParameterCount(); ++i) {
+            for (Annotation ann : params[i].getAnnotations()) {
+                if (ann instanceof PathVariable && ((PathVariable)ann).value().equals("id")) {
+                    id = (Long)args[i];
+                    break;
+                }
+            }
+
+            if (id != null) {
                 break;
             }
         }
@@ -39,7 +51,6 @@ public class ItemControllerAspect {
             logger.warn("Item with id " + id + " not found");
             logger.error(ex.toString());
 
-            MethodSignature methodSignature = (MethodSignature)joinPoint.getSignature();
             Class<?> returnValue = methodSignature.getMethod().getReturnType();
             if (returnValue != Void.class) {
                 return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
