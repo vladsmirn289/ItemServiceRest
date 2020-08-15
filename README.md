@@ -68,6 +68,7 @@ Item service is the service released under version 2.0 of the [Apache License](h
 [main]: ./src/main
 [java]: ./src/main/java
 [com.shop.ItemServiceRest]: ./src/main/java/com/shop/ItemServiceRest
+[Aop]: ./src/main/java/com/shop/ItemServiceRest/Aop
 [Config]: ./src/main/java/com/shop/ItemServiceRest/Config
 [Controller]: ./src/main/java/com/shop/ItemServiceRest/Controller
 [Jackson]: ./src/main/java/com/shop/ItemServiceRest/Jackson
