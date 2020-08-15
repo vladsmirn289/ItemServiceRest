@@ -1,5 +1,7 @@
 package com.shop.ItemServiceRest.Controller;
 
+import com.shop.ItemServiceRest.Aop.BadRequestPointcut;
+import com.shop.ItemServiceRest.Aop.NoSuchElementPointcut;
 import com.shop.ItemServiceRest.Model.Item;
 import com.shop.ItemServiceRest.Service.ItemService;
 import io.swagger.annotations.ApiOperation;
@@ -20,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/items")
@@ -66,18 +67,13 @@ public class ItemController {
     }
 
     @ApiOperation(value = "Find item by id")
+    @NoSuchElementPointcut
     @GetMapping("/{id}")
     public ResponseEntity<Item> showItemById(@PathVariable("id") Long id) {
         logger.info("Called showItemById method");
+        Item items = itemService.findById(id);
 
-        try {
-            Item items = itemService.findById(id);
-            return new ResponseEntity<>(items, HttpStatus.OK);
-        } catch (NoSuchElementException ex) {
-            logger.warn("Item with id " + id + " not found");
-            logger.error(ex.toString());
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(items, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Find item by code")
@@ -98,45 +94,32 @@ public class ItemController {
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request (invalid item information)")
     })
+    @NoSuchElementPointcut
+    @BadRequestPointcut
     @PutMapping("/{id}")
     public ResponseEntity<Item> updateItem(@PathVariable("id") Long id,
                                            @RequestBody @Valid Item item,
                                            BindingResult bindingResult) {
         logger.info("Called updateItem method");
+        Item persistentItem = itemService.findById(id);
 
-        if (bindingResult.hasErrors()) {
-            logger.info("Bad request on update item information");
-            return new ResponseEntity<>(item, HttpStatus.BAD_REQUEST);
-        }
+        BeanUtils.copyProperties(item, persistentItem, "id");
+        itemService.save(persistentItem);
 
-        try {
-            Item persistentItem = itemService.findById(id);
-
-            BeanUtils.copyProperties(item, persistentItem, "id");
-            itemService.save(persistentItem);
-            return new ResponseEntity<>(persistentItem, HttpStatus.OK);
-        } catch (NoSuchElementException ex) {
-            logger.warn("Item with id - " + id + " not found");
-            logger.error(ex.toString());
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(persistentItem, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Create new item")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request (invalid item information)")
     })
+    @BadRequestPointcut
     @PostMapping
     public ResponseEntity<Item> createNewItem(@RequestBody @Valid Item item,
                                               BindingResult bindingResult) {
         logger.info("Called createNewItem method");
-
-        if (bindingResult.hasErrors()) {
-            logger.info("Bad request on create item information");
-            return new ResponseEntity<>(item, HttpStatus.BAD_REQUEST);
-        }
-
         itemService.save(item);
+
         return new ResponseEntity<>(item, HttpStatus.CREATED);
     }
 
@@ -144,16 +127,12 @@ public class ItemController {
     @ApiResponses(value = {
             @ApiResponse(code = 500, message = "Conflict (The item can be located in the basket or in the order list of anyone)")
     })
+    @NoSuchElementPointcut
+    @SuppressWarnings("EmptyCatchBlock")
     @DeleteMapping("/{id}")
     public void deleteItem(@PathVariable("id") Long id) {
         logger.info("Called deleteItem method");
-
-        try {
-            Item item = itemService.findById(id);
-            itemService.delete(item);
-        } catch (NoSuchElementException ex) {
-            logger.warn("Item with id - " + id + " not found");
-            logger.error(ex.toString());
-        }
+        Item item = itemService.findById(id);
+        itemService.delete(item);
     }
 }
