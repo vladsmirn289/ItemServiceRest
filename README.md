@@ -34,6 +34,7 @@ The diagram of the package structure:
         *   [main]
             *   [java]
                 *   [com.shop.ItemServiceRest]
+                    *   [Aop] (Intercepts exceptions to get rid of duplication)
                     *   [Config] (Swagger config)
                     *   [Controller] (Item and Root controllers)
                     *   [Jackson] (Serializers and deserializers for item class)
